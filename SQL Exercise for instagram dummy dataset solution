@@ -1,0 +1,102 @@
+﻿#Vaibhavi Mulay
+#SQL Exercise
+
+#Exercise 1. 
+Create a SQL Query to return the 5 oldest users within the sample database
+
+#Answer
+SELECT * 
+FROM `users` 
+ORDER BY created_at 
+LIMIT 5;
+
+
+
+Exercise 2. 
+Create a SQL Query to return the most popular registration date
+
+#Answer (For date, there are 9 dates that has equal number of most popular registration , so I used Limit 9 to show all 9 )
+SELECT DATE(created_at) AS day, COUNT(*) as total FROM users
+GROUP BY day
+ORDER BY total DESC
+LIMIT 9;
+
+(Likewise for most popular day of week )
+SELECT DAYNAME(created_at) AS day, COUNT(*) as total FROM users
+GROUP BY day
+ORDER BY total DESC
+LIMIT 1;
+
+
+
+
+
+Exercise 3. 
+Create a SQL Query to return all users without any photos
+
+#Answer
+SELECT users.username FROM users
+LEFT JOIN photos ON users.id = photos.user_id
+WHERE photos.id IS NULL;
+
+
+
+
+
+
+Exercise 4.
+ Create a SQL Query to return the most popular photo and the user who posted it
+
+#Answer
+
+SELECT username,photos.id,photos.image_url, 
+COUNT(*) AS total 
+FROM photos
+INNER JOIN likes
+ON likes.photo_id = photos.id
+INNER JOIN users
+ON photos.user_id = users.id
+GROUP BY photos.id
+ORDER BY total DESC
+LIMIT 1;
+
+
+
+
+
+
+
+Exercise 5.
+ Create a SQL Query to calculate average number of photos per user
+
+#Answer
+SELECT (SELECT COUNT(*) FROM photos)/ (SELECT COUNT(*) FROM users) AS averageNumberOfPhotosPerUser;
+
+
+
+
+Exercise 6. 
+Create a SQL Query to return the ten most popular hashtags
+
+#Answer
+SELECT tags.tag_name,
+COUNT(*) AS total
+FROM photo_tags
+INNER JOIN tags on tags.id = photo_tags.tag_id
+GROUP BY tags.id
+ORDER BY total DESC
+LIMIT 5;
+
+
+
+
+
+• Exercise 7. 
+Create a SQL Query to return the users who have liked every single photo
+
+#Answer
+SELECT id,username, COUNT(*) AS NumberOfLiked 
+FROM users
+JOIN likes ON users.id = likes.user_id
+GROUP BY likes.user_id
+HAVING NumberOfLiked = (SELECT COUNT(*) FROM photos);
